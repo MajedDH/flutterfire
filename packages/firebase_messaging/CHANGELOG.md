@@ -1,3 +1,54 @@
+## 7.0.1
+
+ - **FIX**: local dependencies in example apps (#3319).
+ - **CHORE**: intellij cleanup (#3326).
+
+## 7.0.0
+
+* Depend on `firebase_core` and migrate plugin to use `firebase_core` native SDK versioning features;
+	* Firebase iOS SDK versions are now locked to use the same version defined in `firebase_core`.
+	* Firebase Android SDK versions are now using the Firebase Bill of Materials (BoM) to specify individual SDK versions. BoM version is also sourced from `firebase_core`.
+* Allow iOS to be imported as a module.
+
+## 6.0.16
+
+* Fix push notifications clearing after app launch on iOS.
+
+## 6.0.16
+
+* Update lower bound of dart dependency to 2.0.0.
+
+## 6.0.15
+
+* Fix - register `pluginRegistrantCallback` on every `FcmDartService#start` call.
+
+## 6.0.14
+
+* Fix for missing UserAgent.h compilation failures.
+
+## 6.0.13
+
+* Implement `UNUserNotificationCenterDelegate` methods to allow plugin to work when method swizzling is disabled.
+* Applications now only need to update their iOS project's `AppDelegate` when method swizzling is disabled.
+* Applications that need to use `firebase_messaging` with other notification plugins will need to
+  add the following to their iOS project's `Info.plist` file:
+  ```xml
+  <key>FirebaseAppDelegateProxyEnabled</key>
+  <false/>
+  ```
+
+## 6.0.12
+
+* Replace deprecated `getFlutterEngine` call on Android.
+
+## 6.0.11
+
+* Make the pedantic dev_dependency explicit.
+
+## 6.0.10
+
+* Update README to explain how to correctly implement Android background message handling with the new v2 embedding.
+
 ## 6.0.9
 
 * Update Android Gradle plugin dependency to 3.5.3, update documentation and example.
@@ -120,7 +171,7 @@ is not a top-level or static function.
 * Add missing template type parameter to `invokeMethod` calls.
 * Bump minimum Flutter version to 1.5.0.
 * Replace invokeMethod with invokeMapMethod wherever necessary.
- 
+
 ## 5.0.1+1
 
 * Enable support for `onMessage` on iOS using `shouldEstablishDirectChannel`.

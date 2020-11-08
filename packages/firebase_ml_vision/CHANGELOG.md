@@ -1,3 +1,47 @@
+## 0.9.6+3
+
+ - **FIX**: local dependencies in example apps (#3319).
+
+## 0.9.6+2
+
+* Add options for cloud document text recognition.
+
+## 0.9.6+1
+
+* Add options for cloud text recognition.
+
+## 0.9.6
+
+* Add recognition of text in document images through `DocumentTextRecognizer`. See `README.md` for more information.
+
+## 0.9.5+1
+
+* Add options for cloud text recognition.
+
+## 0.9.5
+
+* Fix for error if confidence is 1 or 0.
+
+## 0.9.4
+
+* Update lower bound of dart dependency to 2.0.0.
+
+## 0.9.3+9
+
+* Fix for missing UserAgent.h compilation failures.
+
+## 0.9.3+8
+
+* Replace deprecated `getFlutterEngine` call on Android.
+
+## 0.9.3+7
+
+* Make the pedantic dev_dependency explicit.
+
+## 0.9.3+6
+
+* Replace deprecated text theme fields in example app.
+
 ## 0.9.3+5
 
 * Remove the deprecated `author:` field from pubspec.yaml
@@ -118,7 +162,7 @@ You should now call `detector.close()` when a detector will no longer be used.
 * **Breaking Change** Removed on-device model dependencies from plugin.
   `Android` now requires adding the on-device label detector dependency manually.
   `iOS` now requires adding the on-device barcode/face/label/text detector dependencies manually.
-  See the `README.md` for more details. https://pub.dartlang.org/packages/firebase_ml_vision#-readme-tab-
+  See the `README.md` for more details. https://pub.dev/packages/firebase_ml_vision#-readme-tab-
 
 ## 0.5.1+2
 

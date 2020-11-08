@@ -1,3 +1,39 @@
+## 4.0.1
+
+ - **FIX**: local dependencies in example apps (#3319).
+ - **CHORE**: intellij cleanup (#3326).
+
+## 4.0.0
+
+* Depend on `firebase_core`.
+* Firebase iOS SDK versions are now locked to use the same version defined in `firebase_core`.
+* Firebase Android SDK versions are now using the Firebase Bill of Materials (BoM) to specify individual SDK versions. BoM version is also sourced from `firebase_core`.
+* Allow iOS & MacOS plugins to be imported as modules.
+
+## 3.1.6
+
+* Update lower bound of dart dependency to 2.0.0.
+
+## 3.1.5
+
+* Add macOS support
+
+## 3.1.4
+
+* Fix for missing UserAgent.h compilation failures.
+
+## 3.1.3
+
+* Replace deprecated `getFlutterEngine` call on Android.
+
+## 3.1.2
+
+* Make the pedantic dev_dependency explicit.
+
+## 3.1.1
+
+* Removed unnecessary debug print statements ("i am working").
+
 ## 3.1.0
 
 * Added error handling to `StorageFileDownloadTask` and added propagation of errors to the Future returned by the `writeToFile` method in `StorageReference`. 

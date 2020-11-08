@@ -1,3 +1,47 @@
+## 6.0.1
+
+ - **FIX**: local dependencies in example apps (#3319).
+ - **CHORE**: intellij cleanup (#3326).
+
+## 6.0.0
+
+* Firebase iOS SDK versions are now locked to use the same version defined in
+  `firebase_core`.
+* Firebase Android SDK versions are now using the Firebase Bill of Materials (BoM)
+  to specify individual SDK versions. BoM version is also sourced from
+  `firebase_core`.
+* Allow iOS plugin to be imported as a module.
+
+## 5.0.16
+
+* Endorse `firebase_analytics_web`.
+* Add web support to the example app.
+
+## 5.0.15
+
+* Use the platform interface.
+
+## 5.0.14
+
+* Update lower bound of dart dependency to 2.0.0.
+
+## 5.0.13
+
+* Fix for missing UserAgent.h compilation failures.
+
+## 5.0.12
+
+* Make the pedantic dev_dependency explicit.
+
+## 5.0.11
+
+* Fix overrides a deprecated API.
+* Raise minimum required Flutter SDK version to 1.12.13+hotfix.4
+
+## 5.0.10
+
+* Keep a local registrar to get activity for foreground actions for v1 embedder.
+
 ## 5.0.9
 
 * Remove the deprecated `author:` field from pubspec.yaml

@@ -1,3 +1,40 @@
+## 4.1.0
+
+ - **FIX**: local dependencies in example apps (#3319).
+ - **FEAT**: implement support for `ServerValue.increment(delta)` (#3109).
+ - **CHORE**: intellij cleanup (#3326).
+
+## 4.0.0
+
+* Add MacOS support.
+* Add MacOS example.
+* Firebase iOS SDK versions are now locked to use the same version defined in
+  `firebase_core`.
+* Firebase Android SDK versions are now using the Firebase Bill of Materials (BoM)
+  to specify individual SDK versions. BoM version is also sourced from
+  `firebase_core`.
+* Allow iOS & MacOS plugins to be imported as modules.
+
+## 3.1.6
+
+* Update lower bound of dart dependency to 2.0.0.
+
+## 3.1.5
+
+* Fix (#81) Android setPersistenceCacheSizeBytes crash when Long value was provided.
+
+## 3.1.4
+
+* Fix for missing UserAgent.h compilation failures.
+
+## 3.1.3
+
+* Replace deprecated `getFlutterEngine` call on Android.
+
+## 3.1.2
+
+* Make the pedantic dev_dependency explicit.
+
 ## 3.1.1
 
 * Remove the deprecated `author:` field from pubspec.yaml
