@@ -1,3 +1,4 @@
+// ignore_for_file: require_trailing_commas
 // Copyright 2020 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -12,16 +13,16 @@ class FirebaseFunctionsException extends FirebaseException
   // ignore: public_member_api_docs
   @protected
   FirebaseFunctionsException({
-    @required String message,
-    String code,
-    StackTrace stackTrace,
+    required String message,
+    required String code,
+    StackTrace? stackTrace,
     this.details,
-  }) : super(plugin: 'firebase_functions', message: message, code: code);
+  }) : super(
+            plugin: 'firebase_functions',
+            message: message,
+            code: code,
+            stackTrace: stackTrace);
 
   /// Additional data provided with the exception.
   final dynamic details;
 }
-
-@Deprecated("Deprecated in favor of FirebaseFunctionsException")
-// ignore: public_member_api_docs
-class CloudFunctionsException extends FirebaseFunctionsException {}

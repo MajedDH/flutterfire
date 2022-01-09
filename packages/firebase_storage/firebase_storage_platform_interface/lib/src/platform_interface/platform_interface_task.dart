@@ -1,3 +1,4 @@
+// ignore_for_file: require_trailing_commas
 // Copyright 2020 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -5,7 +6,7 @@
 import 'dart:async';
 
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-import 'package:firebase_storage_platform_interface/firebase_storage_platform_interface.dart';
+import '../../firebase_storage_platform_interface.dart';
 
 /// The interface a task must implement.
 abstract class TaskPlatform extends PlatformInterface {
@@ -20,8 +21,7 @@ abstract class TaskPlatform extends PlatformInterface {
   /// This is used by the app-facing [Task] to ensure that
   /// the object in which it's going to delegate calls has been
   /// constructed properly.
-  static verifyExtends(TaskPlatform instance) {
-    assert(instance != null);
+  static void verifyExtends(TaskPlatform instance) {
     PlatformInterface.verifyToken(instance, _token);
   }
 

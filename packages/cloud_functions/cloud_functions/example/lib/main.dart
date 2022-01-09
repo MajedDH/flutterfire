@@ -1,6 +1,9 @@
+// ignore_for_file: require_trailing_commas
 // Copyright 2019 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+// @dart=2.9
 
 import 'dart:async';
 import 'dart:core';
@@ -12,19 +15,17 @@ import 'package:flutter/material.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  FirebaseFunctions.instance
-      .useFunctionsEmulator(origin: 'http://localhost:5001');
+  FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
   runApp(MyApp());
 }
 
-// ignore: public_member_api_docs
 class MyApp extends StatefulWidget {
+  MyApp({Key key}) : super(key: key);
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   List fruit = [];
 
   @override
@@ -36,7 +37,6 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        key: _scaffoldKey,
         appBar: AppBar(
           title: const Text('Firebase Functions Example'),
         ),
@@ -45,33 +45,36 @@ class _MyAppState extends State<MyApp> {
                 itemCount: fruit.length,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    title: Text("${fruit[index]}"),
+                    title: Text('${fruit[index]}'),
                   );
                 })),
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () async {
-            // See index.js in the functions folder for the example function we
-            // are using for this example
-            HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
-                'listFruit',
-                options: HttpsCallableOptions(timeout: Duration(seconds: 5)));
+        floatingActionButton: Builder(
+          builder: (context) => FloatingActionButton.extended(
+            onPressed: () async {
+              // See index.js in the functions folder for the example function we
+              // are using for this example
+              HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
+                  'listFruit',
+                  options: HttpsCallableOptions(
+                      timeout: const Duration(seconds: 5)));
 
-            await callable().then((v) {
-              setState(() {
-                fruit.clear();
-                v.data.forEach((f) {
-                  fruit.add(f);
+              await callable().then((v) {
+                setState(() {
+                  fruit.clear();
+                  v.data.forEach((f) {
+                    fruit.add(f);
+                  });
                 });
+              }).catchError((e) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text('ERROR: $e'),
+                ));
               });
-            }).catchError((e) {
-              _scaffoldKey.currentState.showSnackBar(SnackBar(
-                content: Text("ERROR: $e"),
-              ));
-            });
-          },
-          label: Text('Call Function'),
-          icon: Icon(Icons.cloud),
-          backgroundColor: Colors.deepOrange,
+            },
+            label: const Text('Call Function'),
+            icon: const Icon(Icons.cloud),
+            backgroundColor: Colors.deepOrange,
+          ),
         ),
       ),
     );

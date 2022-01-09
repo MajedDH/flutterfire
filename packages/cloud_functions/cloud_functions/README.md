@@ -1,3 +1,5 @@
+[<img src="https://raw.githubusercontent.com/FirebaseExtended/flutterfire/master/resources/flutter_favorite.png" width="200" />](https://flutter.dev/docs/development/packages-and-plugins/favorites)
+
 # Firebase Cloud Functions for Flutter
 [![pub package](https://img.shields.io/pub/v/cloud_functions.svg)](https://pub.dev/packages/cloud_functions)
 
@@ -7,8 +9,7 @@ To learn more about Functions, please visit the [Firebase website](https://fireb
 
 ## Getting Started
 
-To get started with Cloud Functions for Firebase, please [see the documentation](https://firebase.flutter.dev/docs/functions/overview)
-available at [https://firebase.flutter.dev](https://firebase.flutter.dev/docs/overview)
+To get started with Cloud Functions for Firebase, please [see the documentation](https://firebase.flutter.dev/docs/functions/overview).
 
 ## Usage
 

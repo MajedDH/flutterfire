@@ -1,23 +1,22 @@
+// ignore_for_file: require_trailing_commas
 // Copyright 2020, the Chromium project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:async';
-
-import 'package:cloud_functions_platform_interface/cloud_functions_platform_interface.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 
-/// Catches a [PlatformException] and converts it into a [FirebaseFunctionsException]
-/// if it was intentionally caught on the native platform.
-FutureOr<Map<String, dynamic>> catchPlatformException(Object exception,
-    [StackTrace stackTrace]) async {
+import '../../../cloud_functions_platform_interface.dart';
+
+/// Catches a [PlatformException] and returns an [Exception].
+///
+/// If the [Exception] is a [PlatformException], a [FirebaseFunctionsException] is returned.
+Exception convertPlatformException(Object exception, [StackTrace? stackTrace]) {
   if (exception is! Exception || exception is! PlatformException) {
     throw exception;
   }
 
-  throw platformExceptionToFirebaseFunctionsException(
-      exception as PlatformException, stackTrace);
+  return platformExceptionToFirebaseFunctionsException(exception, stackTrace);
 }
 
 /// Converts a [PlatformException] into a [FirebaseFunctionsException].
@@ -27,14 +26,14 @@ FutureOr<Map<String, dynamic>> catchPlatformException(Object exception,
 /// messages which can be converted into user friendly exceptions.
 FirebaseException platformExceptionToFirebaseFunctionsException(
     PlatformException platformException,
-    [StackTrace stackTrace]) {
-  Map<String, dynamic> details = platformException.details != null
+    [StackTrace? stackTrace]) {
+  Map<String, dynamic>? details = platformException.details != null
       ? Map<String, dynamic>.from(platformException.details)
       : null;
   dynamic additionalData = details != null ? details['additionalData'] : null;
 
   String code = 'unknown';
-  String message = platformException.message;
+  String? message = platformException.message;
 
   if (details != null) {
     code = details['code'] ?? code;
@@ -42,5 +41,8 @@ FirebaseException platformExceptionToFirebaseFunctionsException(
   }
 
   return FirebaseFunctionsException(
-      code: code, message: message, details: additionalData);
+      code: code,
+      message: message!,
+      details: additionalData,
+      stackTrace: stackTrace);
 }

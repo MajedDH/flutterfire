@@ -1,3 +1,5 @@
+[<img src="https://raw.githubusercontent.com/FirebaseExtended/flutterfire/master/resources/flutter_favorite.png" width="200" />](https://flutter.dev/docs/development/packages-and-plugins/favorites)
+
 # Firebase Crashlytics for Flutter
 
 [![pub package](https://img.shields.io/pub/v/firebase_crashlytics.svg)](https://pub.dev/packages/firebase_crashlytics)
@@ -8,8 +10,7 @@ To learn more about Crashlytics, please visit the [Firebase website](https://fir
 
 ## Getting Started
 
-To get started with Crashlytics for Flutter, please [see the documentation](https://firebase.flutter.dev/docs/crashlytics/overview)
-available at [https://firebase.flutter.dev](https://firebase.flutter.dev/docs/overview)
+To get started with Crashlytics for Flutter, please [see the documentation](https://firebase.flutter.dev/docs/crashlytics/overview).
 
 ## Usage
 

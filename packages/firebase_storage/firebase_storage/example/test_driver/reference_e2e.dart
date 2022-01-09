@@ -1,3 +1,6 @@
+// ignore_for_file: require_trailing_commas
+// @dart = 2.9
+
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -11,7 +14,7 @@ import './test_utils.dart';
 
 void runReferenceTests() {
   group('$Reference', () {
-    FirebaseStorage storage;
+    /*late*/ FirebaseStorage storage;
 
     setUpAll(() async {
       storage = FirebaseStorage.instance;
@@ -68,106 +71,81 @@ void runReferenceTests() {
     });
 
     group('delete()', () {
-      setUpAll(() async {
-        File file = await createFile('deleteMe.jpeg');
-        await storage.ref('/ok.jpeg').writeToFile(file);
-        await storage.ref('/deleteMe.jpeg').putFile(file);
-      });
-
       test('should delete a file', () async {
-        Reference ref = storage.ref('/deleteMe.jpeg');
+        Reference ref = storage.ref('flutter-tests/deleteMe.jpeg');
+        await ref.putString('To Be Deleted :)');
         await ref.delete();
 
-        try {
-          await ref.getMetadata();
-        } on FirebaseException catch (error) {
-          expect(error.code, 'object-not-found');
-          expect(error.message, 'No object exists at the desired reference.');
-          return;
-        }
-        fail('Did not throw');
+        await expectLater(
+            () => ref.delete(),
+            throwsA(isA<FirebaseException>()
+                .having((e) => e.code, 'code', 'object-not-found')
+                .having((e) => e.message, 'message',
+                    'No object exists at the desired reference.')));
       });
 
       test('throws error if file does not exist', () async {
-        Reference ref = storage.ref('/iDoNotExist.jpeg');
+        Reference ref = storage.ref('flutter-tests/iDoNotExist.jpeg');
 
-        try {
-          await ref.delete();
-        } on FirebaseException catch (error) {
-          expect(error.code, 'object-not-found');
-          expect(error.message, 'No object exists at the desired reference.');
-          return;
-        }
-
-        fail('Did not throw');
+        await expectLater(
+            () => ref.delete(),
+            throwsA(isA<FirebaseException>()
+                .having((e) => e.code, 'code', 'object-not-found')
+                .having((e) => e.message, 'message',
+                    'No object exists at the desired reference.')));
       });
 
       test('throws error if no write permission', () async {
         Reference ref = storage.ref('/uploadNope.jpeg');
 
-        try {
-          await ref.delete();
-        } on FirebaseException catch (error) {
-          expect(error.code, 'unauthorized');
-          expect(error.message,
-              'User is not authorized to perform the desired action.');
-
-          return;
-        }
-
-        fail('Did not throw');
+        await expectLater(
+            () => ref.delete(),
+            throwsA(isA<FirebaseException>()
+                .having((e) => e.code, 'code', 'unauthorized')
+                .having((e) => e.message, 'message',
+                    'User is not authorized to perform the desired action.')));
       });
     });
 
     group('getDownloadURL', () {
       test('gets a download url', () async {
-        Reference ref = storage.ref('/ok.jpeg');
+        Reference ref = storage.ref('flutter-tests/ok.txt');
+        await ref.putString('ok');
+
         String downloadUrl = await ref.getDownloadURL();
         expect(downloadUrl, isA<String>());
-        expect(downloadUrl, contains('/ok.jpeg'));
+        expect(downloadUrl, contains('ok.txt'));
         expect(downloadUrl, contains(storage.app.options.projectId));
       });
 
-      test('errors if permission denied', () async {
-        Reference ref = storage.ref('/not.jpeg');
-        try {
-          String downloadUrl = await ref.getDownloadURL();
-          expect(downloadUrl, isA<String>());
-        } on FirebaseException catch (error) {
-          expect(error.plugin, 'firebase_storage');
-          expect(error.code, 'unauthorized');
-          expect(error.message,
-              'User is not authorized to perform the desired action.');
-          return;
-        } catch (_) {
-          fail('Should have thrown an [FirebaseException] error');
-        }
-
-        fail('Should have thrown an error');
-      });
+      // TODO(ehesp): Emulator rules issue - comment back in once fixed
+      // test('errors if permission denied', () async {
+      //   Reference ref = storage.ref('writeOnly.txt');
+      //
+      //   await expectLater(
+      //       () => ref.getDownloadURL(),
+      //       throwsA(isA<FirebaseException>()
+      //           .having((e) => e.code, 'code', 'unauthorized')
+      //           .having((e) => e.message, 'message',
+      //               'User is not authorized to perform the desired action.')));
+      // });
 
       test('throws error if file does not exist', () async {
-        Reference ref = storage.ref('/iDoNotExist.jpeg');
+        Reference ref = storage.ref('flutter-tests/iDoNotExist.jpeg');
 
-        try {
-          await ref.getDownloadURL();
-        } on FirebaseException catch (error) {
-          expect(error.plugin, 'firebase_storage');
-          expect(error.code, 'object-not-found');
-          expect(error.message, 'No object exists at the desired reference.');
-          return;
-        } catch (_) {
-          fail('Should have thrown an [FirebaseException] error');
-        }
-
-        fail('Should have thrown an error');
+        await expectLater(
+            () => ref.getDownloadURL(),
+            throwsA(isA<FirebaseException>()
+                .having((e) => e.code, 'code', 'object-not-found')
+                .having((e) => e.message, 'message',
+                    'No object exists at the desired reference.')));
       });
     });
 
     group('list', () {
       test('returns list results', () async {
-        Reference ref = storage.ref('/list');
-        ListResult result = await ref.list(ListOptions(maxResults: 25));
+        Reference ref = storage.ref('flutter-tests/list');
+        ListResult result = await ref.list(const ListOptions(maxResults: 25));
 
         expect(result.items.length, greaterThan(0));
         expect(result.prefixes, isA<List<Reference>>());
@@ -176,25 +154,25 @@ void runReferenceTests() {
 
       test('errors if maxResults is less than 0 ', () async {
         Reference ref = storage.ref('/list');
-        expect(
-            () => ref.list(ListOptions(maxResults: -1)), throwsAssertionError);
+        expect(() => ref.list(const ListOptions(maxResults: -1)),
+            throwsAssertionError);
       });
 
       test('errors if maxResults is 0 ', () async {
         Reference ref = storage.ref('/list');
-        expect(
-            () => ref.list(ListOptions(maxResults: 0)), throwsAssertionError);
+        expect(() => ref.list(const ListOptions(maxResults: 0)),
+            throwsAssertionError);
       });
 
       test('errors if maxResults is more than 1000 ', () async {
         Reference ref = storage.ref('/list');
-        expect(() => ref.list(ListOptions(maxResults: 1001)),
+        expect(() => ref.list(const ListOptions(maxResults: 1001)),
             throwsAssertionError);
       });
     });
 
     test('listAll', () async {
-      Reference ref = storage.ref('/list');
+      Reference ref = storage.ref('flutter-tests/list');
       ListResult result = await ref.listAll();
       expect(result.items, isNotNull);
       expect(result.items.length, greaterThan(0));
@@ -210,61 +188,58 @@ void runReferenceTests() {
 
         Uint8List data = Uint8List.fromList(list);
 
-        final Reference ref = storage.ref('/playground').child('flt-ok.txt');
+        final Reference ref = storage.ref('flutter-tests').child('flt-ok.txt');
+
         final TaskSnapshot complete = await ref.putData(
             data,
             SettableMetadata(
               contentLanguage: 'en',
-              customMetadata: <String, String>{'activity': 'test'},
             ));
 
         expect(complete.metadata.size, kTestString.length);
         expect(complete.metadata.contentLanguage, 'en');
-        expect(complete.metadata.customMetadata['activity'], 'test');
       });
 
       test('errors if permission denied', () async {
-        try {
-          List<int> list = utf8.encode('hello world');
+        List<int> list = utf8.encode('hello world');
+        Uint8List data = Uint8List.fromList(list);
 
-          Uint8List data = Uint8List.fromList(list);
+        final Reference ref = storage.ref('/uploadNope.jpeg');
 
-          await storage.ref('/uploadNope.jpeg').putData(data);
-          fail('Should have thrown an error');
-        } on FirebaseException catch (error) {
-          expect(error.plugin, 'firebase_storage');
-          expect(error.code, 'unauthorized');
-          expect(error.message,
-              'User is not authorized to perform the desired action.');
-        } catch (_) {
-          fail('Should have thrown an [FirebaseException] error');
-        }
+        await expectLater(
+            () => ref.putData(data),
+            throwsA(isA<FirebaseException>()
+                .having((e) => e.code, 'code', 'unauthorized')
+                .having((e) => e.message, 'message',
+                    'User is not authorized to perform the desired action.')));
       });
     });
 
     group('putBlob', () {
       test('throws [UnimplementedError] for native platforms', () async {
         final File file = await createFile('flt-ok.txt');
-        final Reference ref = storage.ref('/playground').child('flt-ok.txt');
+        final Reference ref = storage.ref('flutter-tests').child('flt-ok.txt');
 
-        try {
-          await ref.putBlob(
-              file,
-              SettableMetadata(
-                contentLanguage: 'en',
-                customMetadata: <String, String>{'activity': 'test'},
-              ));
-        } on UnimplementedError catch (error) {
-          expect(error.message,
-              'putBlob() is not supported on native platforms. Use [put], [putFile] or [putString] instead.');
-        }
-      }, skip: !kIsWeb);
+        await expectLater(
+            () => ref.putBlob(
+                file,
+                SettableMetadata(
+                  contentLanguage: 'en',
+                  customMetadata: <String, String>{'activity': 'test'},
+                )),
+            throwsA(isA<UnimplementedError>().having(
+                (e) => e.message,
+                'message',
+                'putBlob() is not supported on native platforms. Use [put], [putFile] or [putString] instead.')));
+
+        // This *must* be skipped in web, the test is intended for native platforms.
+      }, skip: kIsWeb);
     });
 
     group('putFile', () {
       test('uploads a file', () async {
         final File file = await createFile('flt-ok.txt');
-        final Reference ref = storage.ref('/playground').child('flt-ok.txt');
+        final Reference ref = storage.ref('flutter-tests').child('flt-ok.txt');
 
         final TaskSnapshot complete = await ref.putFile(
           file,
@@ -280,125 +255,93 @@ void runReferenceTests() {
       });
 
       test('errors if permission denied', () async {
-        try {
-          File file = await createFile('flt-ok.txt');
-          await storage.ref('/uploadNope.jpeg').putFile(file);
-        } on FirebaseException catch (error) {
-          expect(error.plugin, 'firebase_storage');
-          expect(error.code, 'unauthorized');
-          expect(error.message,
-              'User is not authorized to perform the desired action.');
-          return;
-        } catch (_) {
-          fail('Should have thrown an [FirebaseException] error');
-        }
+        File file = await createFile('flt-ok.txt');
+        final Reference ref = storage.ref('uploadNope.jpeg');
 
-        fail('Should have thrown an error');
+        await expectLater(
+            () => ref.putFile(file),
+            throwsA(isA<FirebaseException>()
+                .having((e) => e.code, 'code', 'unauthorized')
+                .having((e) => e.message, 'message',
+                    'User is not authorized to perform the desired action.')));
       });
-    });
+      // putFile is not supported in web.
+    }, skip: kIsWeb);
 
     group('putString', () {
       test('uploads a string', () async {
-        final Reference ref = storage.ref('/playground').child('flt-ok.txt');
+        final Reference ref = storage.ref('flutter-tests').child('flt-ok.txt');
         final TaskSnapshot complete = await ref.putString('data');
         expect(complete.totalBytes, greaterThan(0));
       });
 
       test('errors if permission denied', () async {
-        try {
-          await storage.ref('/uploadNope.jpeg').putString('data');
-        } on FirebaseException catch (error) {
-          expect(error.plugin, 'firebase_storage');
-          expect(error.code, 'unauthorized');
-          expect(error.message,
-              'User is not authorized to perform the desired action.');
-          return;
-        } catch (_) {
-          fail('Should have thrown an [FirebaseException] error');
-        }
+        final Reference ref = storage.ref('uploadNope.jpeg');
 
-        fail('Should have thrown an error');
+        await expectLater(
+            () => ref.putString('data'),
+            throwsA(isA<FirebaseException>()
+                .having((e) => e.code, 'code', 'unauthorized')
+                .having((e) => e.message, 'message',
+                    'User is not authorized to perform the desired action.')));
       });
     });
 
     group('updateMetadata', () {
       test('updates metadata', () async {
-        Reference ref = storage.ref('/playground').child('flt-ok.txt');
-        FullMetadata fullMetadata =
-            await ref.updateMetadata(SettableMetadata(contentLanguage: 'fr'));
-        expect(fullMetadata.contentLanguage, 'fr');
-      });
-
-      test('errors if metadata update removes existing data', () async {
-        Reference ref = storage.ref('/playground').child('flt-ok.txt');
-        await ref.updateMetadata(SettableMetadata(contentLanguage: 'es'));
+        Reference ref = storage.ref('flutter-tests').child('flt-ok.txt');
         FullMetadata fullMetadata = await ref
-            .updateMetadata(SettableMetadata(customMetadata: <String, String>{
-          'action': 'updateMetadata test',
-        }));
-        expect(fullMetadata.contentLanguage, 'es');
-        expect(fullMetadata.customMetadata, {'action': 'updateMetadata test'});
+            .updateMetadata(SettableMetadata(customMetadata: {'foo': 'bar'}));
+        expect(fullMetadata.customMetadata['foo'], 'bar');
       });
 
       test('errors if property does not exist', () async {
-        Reference ref = storage.ref('/not.jpeg');
-        try {
-          await ref.updateMetadata(SettableMetadata(contentType: 'unknown'));
-        } on FirebaseException catch (e) {
-          expect(e.code, 'object-not-found');
-          expect(e.message, 'No object exists at the desired reference.');
-          return;
-        } catch (e) {
-          fail('should have thrown an [FirebaseException] error');
-        }
+        Reference ref = storage.ref('flutter-tests/iDoNotExist.jpeg');
 
-        fail('should have thrown an error');
+        await expectLater(
+            () => ref.updateMetadata(SettableMetadata(contentType: 'unknown')),
+            throwsA(isA<FirebaseException>()
+                .having((e) => e.code, 'code', 'object-not-found')
+                .having((e) => e.message, 'message',
+                    'No object exists at the desired reference.')));
       });
 
-      test('errors if permission denied', () async {
-        try {
-          Reference ref = storage.ref('/ok.jpeg');
-
-          await ref.updateMetadata(SettableMetadata(contentType: 'jpeg'));
-        } on FirebaseException catch (error) {
-          expect(error.plugin, 'firebase_storage');
-          expect(error.code, 'unauthorized');
-          expect(error.message,
-              'User is not authorized to perform the desired action.');
-          return;
-        } catch (_) {
-          fail('Should have thrown an [FirebaseException] error');
-        }
-
-        fail('Should have thrown an error');
-      });
+      // TODO(ehesp): Emulator rules issue - comment back in once fixed
+      // test('errors if permission denied', () async {
+      //   final Reference ref = storage.ref('writeOnly.txt');
+      //
+      //   await expectLater(
+      //       () => ref.updateMetadata(SettableMetadata(contentType: 'jpeg')),
+      //       throwsA(isA<FirebaseException>()
+      //           .having((e) => e.code, 'code', 'unauthorized')
+      //           .having((e) => e.message, 'message',
+      //               'User is not authorized to perform the desired action.')));
+      // });
     });
 
     group('writeToFile', () {
       test('downloads a file', () async {
         File file = await createFile('ok.jpeg');
-        TaskSnapshot complete = await storage.ref('/ok.jpeg').writeToFile(file);
+        TaskSnapshot complete =
+            await storage.ref('flutter-tests/ok.txt').writeToFile(file);
         expect(complete.bytesTransferred, complete.totalBytes);
         expect(complete.state, TaskState.success);
       });
 
-      test('errors if permission denied', () async {
-        try {
-          File file = await createFile('not.jpeg');
-          await storage.ref('/not.jpeg').writeToFile(file);
-        } on FirebaseException catch (error) {
-          expect(error.plugin, 'firebase_storage');
-          expect(error.code, 'unauthorized');
-          expect(error.message,
-              'User is not authorized to perform the desired action.');
-          return;
-        } catch (_) {
-          fail('Should have thrown an [FirebaseException] error');
-        }
-
-        fail('Should have thrown an error');
-      });
-    });
+      // TODO(ehesp): Emulator rules issue - comment back in once fixed
+      // test('errors if permission denied', () async {
+      //   File file = await createFile('not.jpeg');
+      //   final Reference ref = storage.ref('/nope.jpeg');
+      //
+      //   await expectLater(
+      //       () => ref.writeToFile(file),
+      //       throwsA(isA<FirebaseException>()
+      //           .having((e) => e.code, 'code', 'unauthorized')
+      //           .having((e) => e.message, 'message',
+      //               'User is not authorized to perform the desired action.')));
+      // });
+      // writeToFile is not supported in web
+    }, skip: kIsWeb);
 
     test('toString', () async {
       expect(storage.ref('/uploadNope.jpeg').toString(),

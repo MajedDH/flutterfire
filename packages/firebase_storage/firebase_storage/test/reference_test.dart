@@ -1,3 +1,4 @@
+// ignore_for_file: require_trailing_commas
 // Copyright 2020 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -9,37 +10,24 @@ import 'dart:typed_data';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_storage_platform_interface/firebase_storage_platform_interface.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:quiver/core.dart';
-
-import 'mock.dart';
-
 import 'package:mockito/mockito.dart';
 
-const String testString = 'Hello World';
-const String testBucket = 'test-bucket';
-const String testFullPath = 'foo/bar';
-const String testName = 'test-name';
-const String testParent = 'test-parent';
-const String testDownloadUrl = 'test-download-url';
-const Map<String, dynamic> testMetadataMap = <String, dynamic>{
-  'contentType': 'gif'
-};
-const int testMaxResults = 1;
-const String testPageToken = 'test-page-token';
+import 'mock.dart';
 
 MockReferencePlatform mockReference = MockReferencePlatform();
 MockListResultPlatform mockListResultPlatform = MockListResultPlatform();
 MockUploadTaskPlatform mockUploadTaskPlatform = MockUploadTaskPlatform();
 MockDownloadTaskPlatform mockDownloadTaskPlatform = MockDownloadTaskPlatform();
 
-void main() async {
+Future<void> main() async {
   setupFirebaseStorageMocks();
-  FirebaseStorage storage;
-  Reference testRef;
+  late FirebaseStorage storage;
+  late Reference testRef;
   FullMetadata testFullMetadata = FullMetadata(testMetadataMap);
   ListOptions testListOptions =
-      ListOptions(maxResults: testMaxResults, pageToken: testPageToken);
+      const ListOptions(maxResults: testMaxResults, pageToken: testPageToken);
 
   SettableMetadata testSettableMetadata = SettableMetadata();
   File testFile = await createFile('foo.txt');
@@ -51,7 +39,6 @@ void main() async {
       await Firebase.initializeApp();
       storage = FirebaseStorage.instance;
 
-      // delegate method mocks
       when(kMockStoragePlatform.ref(any)).thenReturn(mockReference);
 
       testRef = storage.ref();
@@ -65,8 +52,6 @@ void main() async {
 
         expect(result, isA<String>());
         expect(result, testBucket);
-
-        verify(mockReference.bucket);
       });
     });
 
@@ -78,8 +63,6 @@ void main() async {
 
         expect(result, isA<String>());
         expect(result, testFullPath);
-
-        verify(mockReference.fullPath);
       });
     });
 
@@ -91,8 +74,6 @@ void main() async {
 
         expect(result, isA<String>());
         expect(result, testName);
-
-        verify(mockReference.name);
       });
     });
 
@@ -103,8 +84,6 @@ void main() async {
         final result = testRef.parent;
 
         expect(result, isA<Reference>());
-
-        verify(mockReference.parent);
       });
       test('returns null if root', () {
         when(mockReference.parent).thenReturn(null);
@@ -112,8 +91,6 @@ void main() async {
         final result = testRef.parent;
 
         expect(result, isNull);
-
-        verify(mockReference.parent);
       });
     });
 
@@ -138,10 +115,6 @@ void main() async {
         expect(result, isA<Reference>());
 
         verify(mockReference.child(testFullPath));
-      });
-
-      test('throws AssertionError if path is null', () {
-        expect(() => testRef.child(null), throwsAssertionError);
       });
     });
 
@@ -196,13 +169,13 @@ void main() async {
 
       test('throws AssertionError if max results is not greater than 0', () {
         ListOptions listOptions =
-            ListOptions(maxResults: 0, pageToken: testPageToken);
+            const ListOptions(maxResults: 0, pageToken: testPageToken);
         expect(() => testRef.list(listOptions), throwsAssertionError);
       });
 
       test('throws AssertionError if max results is greater than 1000', () {
         ListOptions listOptions =
-            ListOptions(maxResults: 1001, pageToken: testPageToken);
+            const ListOptions(maxResults: 1001, pageToken: testPageToken);
 
         expect(() => testRef.list(listOptions), throwsAssertionError);
       });
@@ -235,10 +208,6 @@ void main() async {
 
         verify(mockReference.putData(data));
       });
-
-      test('throws AssertionError if buffer is null', () {
-        expect(() => testRef.putData(null), throwsAssertionError);
-      });
     });
 
     group('putBlob()', () {
@@ -270,10 +239,6 @@ void main() async {
         verify(mockReference.putFile(testFile));
       });
 
-      test('throws AssertionError if file is null', () {
-        expect(() => testRef.putFile(null), throwsAssertionError);
-      });
-
       test('throws AssertionError if file does not exists', () async {
         File file = await createFile('delete-me');
         file.deleteSync();
@@ -283,17 +248,14 @@ void main() async {
     });
 
     group('putString()', () {
-      when(mockReference.putString(any, any, any))
-          .thenReturn(mockUploadTaskPlatform);
       test('raw string values', () {
-        final result =
-            testRef.putString(testString, format: PutStringFormat.raw);
+        final result = testRef.putString(testString);
 
         expect(result, isA<Task>());
 
         // confirm raw string was converted to a Base64 format
         String data = base64.encode(utf8.encode(testString));
-        verify(mockReference.putString(data, PutStringFormat.base64, null));
+        verify(mockReference.putString(data, PutStringFormat.base64));
       });
 
       test('data_url format', () {
@@ -318,15 +280,6 @@ void main() async {
                 format: PutStringFormat.dataUrl),
             throwsAssertionError);
       });
-
-      test('throws AssertionError if data is null', () {
-        expect(() => testRef.putString(null), throwsAssertionError);
-      });
-
-      test('throws AssertionError if format is null', () {
-        expect(() => testRef.putString(testString, format: null),
-            throwsAssertionError);
-      });
     });
 
     group('updateMetadata()', () {
@@ -341,10 +294,6 @@ void main() async {
 
         verify(mockReference.updateMetadata(testSettableMetadata));
       });
-
-      test('throws AssertionError if metadata is null', () {
-        expect(() => testRef.updateMetadata(null), throwsAssertionError);
-      });
     });
 
     group('writeToFile()', () {
@@ -358,19 +307,17 @@ void main() async {
 
         verify(mockReference.writeToFile(testFile));
       });
-
-      test('throws AssertionError if file is null', () {
-        expect(() => testRef.writeToFile(null), throwsAssertionError);
-      });
     });
 
     test('hashCode()', () {
-      expect(testRef.hashCode, hash2(storage, testFullPath));
+      expect(testRef.hashCode, hashValues(storage, testFullPath));
     });
 
     test('toString()', () {
-      expect(testRef.toString(),
-          '$Reference(app: ${defaultFirebaseAppName}, fullPath: $testFullPath)');
+      expect(
+        testRef.toString(),
+        '$Reference(app: $defaultFirebaseAppName, fullPath: $testFullPath)',
+      );
     });
   });
 }

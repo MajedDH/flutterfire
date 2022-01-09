@@ -1,3 +1,4 @@
+// ignore_for_file: require_trailing_commas
 // Copyright 2020 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -6,10 +7,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_storage_platform_interface/firebase_storage_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
 
 import 'mock.dart';
-
-import 'package:mockito/mockito.dart';
 
 const String testString = 'Hello World.';
 const int testBytesTransferred = 11;
@@ -24,8 +24,8 @@ MockTaskSnapshotPlatform mockTaskSnapshotPlatform = MockTaskSnapshotPlatform();
 
 void main() {
   setupFirebaseStorageMocks();
-  FirebaseStorage storage;
-  TaskSnapshot taskSnapshot;
+  late FirebaseStorage storage;
+  late TaskSnapshot taskSnapshot;
   FullMetadata fullMetadata = FullMetadata(testMetadata);
 
   group('$TaskSnapshot', () {
@@ -34,7 +34,6 @@ void main() {
 
       await Firebase.initializeApp();
       storage = FirebaseStorage.instance;
-
       when(kMockStoragePlatform.ref(any)).thenReturn(mockReferencePlatform);
       when(mockReferencePlatform.putString(any, any, any))
           .thenReturn(mockUploadTaskPlatform);
@@ -59,7 +58,7 @@ void main() {
       test('verify delegate method is called', () {
         when(mockTaskSnapshotPlatform.metadata).thenReturn(fullMetadata);
 
-        final result = taskSnapshot.metadata;
+        final result = taskSnapshot.metadata!;
 
         expect(result, isA<FullMetadata>());
         expect(result.contentType, 'gif');

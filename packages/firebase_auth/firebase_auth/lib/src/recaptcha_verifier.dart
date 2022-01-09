@@ -1,3 +1,4 @@
+// ignore_for_file: require_trailing_commas
 // Copyright 2020 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -45,23 +46,23 @@ class RecaptchaVerifier {
   ///
   /// [onExpired] An optional callback which is called when the reCAPTCHA expires.
   factory RecaptchaVerifier({
-    String container,
+    String? container,
     RecaptchaVerifierSize size = RecaptchaVerifierSize.normal,
     RecaptchaVerifierTheme theme = RecaptchaVerifierTheme.light,
-    RecaptchaVerifierOnSuccess onSuccess,
-    RecaptchaVerifierOnError onError,
-    RecaptchaVerifierOnExpired onExpired,
+    RecaptchaVerifierOnSuccess? onSuccess,
+    RecaptchaVerifierOnError? onError,
+    RecaptchaVerifierOnExpired? onExpired,
   }) {
-    assert(size != null);
-    assert(theme != null);
-    return RecaptchaVerifier._(_factory.delegateFor(
-      container: container,
-      size: size,
-      theme: theme,
-      onSuccess: onSuccess,
-      onError: onError,
-      onExpired: onExpired,
-    ));
+    return RecaptchaVerifier._(
+      _factory.delegateFor(
+        container: container,
+        size: size,
+        theme: theme,
+        onSuccess: onSuccess,
+        onError: onError,
+        onExpired: onExpired,
+      ),
+    );
   }
 
   /// Returns the underlying factory delegate instance.

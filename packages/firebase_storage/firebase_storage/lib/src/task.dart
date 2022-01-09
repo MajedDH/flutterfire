@@ -1,3 +1,4 @@
+// ignore_for_file: require_trailing_commas
 // Copyright 2020, the Chromium project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
@@ -6,20 +7,14 @@ part of firebase_storage;
 
 /// A class representing an on-going storage task that additionally delegates to a [Future].
 abstract class Task implements Future<TaskSnapshot> {
-  TaskPlatform _delegate;
-
-  /// The [FirebaseStorage] instance associated with this task.
-  final FirebaseStorage storage;
-
   Task._(this.storage, this._delegate) {
     TaskPlatform.verifyExtends(_delegate);
   }
 
-  @Deprecated('events has been deprecated in favor of snapshotEvents')
-  // ignore: public_member_api_docs
-  Stream<dynamic> get events {
-    return snapshotEvents;
-  }
+  TaskPlatform _delegate;
+
+  /// The [FirebaseStorage] instance associated with this task.
+  final FirebaseStorage storage;
 
   /// Returns a [Stream] of [TaskSnapshot] events.
   ///
@@ -32,10 +27,6 @@ abstract class Task implements Future<TaskSnapshot> {
     return _delegate.snapshotEvents
         .map((snapshotDelegate) => TaskSnapshot._(storage, snapshotDelegate));
   }
-
-  @Deprecated("Deprecated in favor of [snapshot]")
-  // ignore: public_member_api_docs
-  TaskSnapshot get lastSnapshot => snapshot;
 
   /// The latest [TaskSnapshot] for this task.
   TaskSnapshot get snapshot {
@@ -66,14 +57,14 @@ abstract class Task implements Future<TaskSnapshot> {
 
   @override
   Future<TaskSnapshot> catchError(Function onError,
-      {bool Function(Object error) test}) async {
+      {bool Function(Object error)? test}) async {
     await _delegate.onComplete.catchError(onError, test: test);
     return snapshot;
   }
 
   @override
   Future<S> then<S>(FutureOr<S> Function(TaskSnapshot) onValue,
-          {Function onError}) =>
+          {Function? onError}) =>
       _delegate.onComplete.then((_) {
         return onValue(snapshot);
       }, onError: onError);
@@ -86,7 +77,7 @@ abstract class Task implements Future<TaskSnapshot> {
 
   @override
   Future<TaskSnapshot> timeout(Duration timeLimit,
-          {FutureOr<TaskSnapshot> Function() onTimeout}) =>
+          {FutureOr<TaskSnapshot> Function()? onTimeout}) =>
       _delegate.onComplete
           .then((_) => snapshot)
           .timeout(timeLimit, onTimeout: onTimeout);

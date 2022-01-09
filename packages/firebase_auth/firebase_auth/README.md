@@ -1,3 +1,5 @@
+[<img src="https://raw.githubusercontent.com/FirebaseExtended/flutterfire/master/resources/flutter_favorite.png" width="200" />](https://flutter.dev/docs/development/packages-and-plugins/favorites)
+
 # Firebase Auth for Flutter
 [![pub package](https://img.shields.io/pub/v/firebase_auth.svg)](https://pub.dev/packages/firebase_auth)
 
@@ -7,8 +9,7 @@ To learn more about Firebase Auth, please visit the [Firebase website](https://f
 
 ## Getting Started
 
-To get started with Firebase Auth for Flutter, please [see the documentation](https://firebase.flutter.dev/docs/auth/overview)
-available at [https://firebase.flutter.dev](https://firebase.flutter.dev/docs/overview)
+To get started with Firebase Auth for Flutter, please [see the documentation](https://firebase.flutter.dev/docs/auth/overview).
 
 ## Usage
 

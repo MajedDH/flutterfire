@@ -1,6 +1,11 @@
+// ignore_for_file: require_trailing_commas
+// @dart = 2.9
+
 // Copyright 2020, the Chromium project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
+
+// @dart=2.9
 
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:drive/drive.dart' as drive;
@@ -12,13 +17,13 @@ import 'sample.dart' as data;
 String kTestFunctionDefaultRegion = 'testFunctionDefaultRegion';
 String kTestFunctionCustomRegion = 'testFunctionCustomRegion';
 String kTestFunctionTimeout = 'testFunctionTimeout';
+String kTestMapConvertType = 'testMapConvertType';
 
 void testsMain() {
   HttpsCallable callable;
   setUpAll(() async {
     await Firebase.initializeApp();
-    FirebaseFunctions.instance
-        .useFunctionsEmulator(origin: 'http://localhost:5001');
+    FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
     callable =
         FirebaseFunctions.instance.httpsCallable(kTestFunctionDefaultRegion);
   });
@@ -78,6 +83,17 @@ void testsMain() {
       });
       expect(result.data, equals(data.deepList));
     });
+
+    test(
+        '[HttpsCallableResult.data] should return Map<String, dynamic> type for returned objects',
+        () async {
+      HttpsCallable callable =
+          FirebaseFunctions.instance.httpsCallable(kTestMapConvertType);
+
+      var result = await callable();
+
+      expect(result.data, isA<Map<String, dynamic>>());
+    });
   });
 
   group('FirebaseFunctionsException', () {
@@ -136,13 +152,13 @@ void testsMain() {
     setUpAll(() async {
       timeoutCallable = FirebaseFunctions.instance.httpsCallable(
           kTestFunctionTimeout,
-          options: HttpsCallableOptions(timeout: Duration(seconds: 3)));
+          options: HttpsCallableOptions(timeout: const Duration(seconds: 3)));
     });
 
     test('times out when the provided timeout is exceeded', () async {
       try {
         await timeoutCallable({
-          'testTimeout': Duration(seconds: 6).inMilliseconds.toString(),
+          'testTimeout': const Duration(seconds: 6).inMilliseconds.toString(),
         });
         fail('Should have thrown');
       } on FirebaseFunctionsException catch (e) {
