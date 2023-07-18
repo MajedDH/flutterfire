@@ -64,9 +64,9 @@ public class CustomFlutterFirebaseMessagingReceiver extends FlutterFirebaseMessa
         answerIntent.putExtra("TYPE", "ANSWER");
         Intent denyIntent = new Intent(contentIntent);
         denyIntent.putExtra("TYPE", "DENY");
-        PendingIntent contentPendingIntent = PendingIntent.getActivity(context, 0, contentIntent, PendingIntent.FLAG_ONE_SHOT);
-        PendingIntent answerPendingIntent = PendingIntent.getActivity(context, 1, answerIntent, PendingIntent.FLAG_ONE_SHOT);
-        PendingIntent denyPendingIntent = PendingIntent.getActivity(context, 2, denyIntent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent contentPendingIntent = PendingIntent.getActivity(context, 0, contentIntent, PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent answerPendingIntent = PendingIntent.getActivity(context, 1, answerIntent, PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent denyPendingIntent = PendingIntent.getActivity(context, 2, denyIntent, PendingIntent.FLAG_IMMUTABLE);
         Notification.Builder builder = new Notification.Builder(context);
         builder.setOngoing(true);
         builder.setPriority(Notification.PRIORITY_HIGH);
